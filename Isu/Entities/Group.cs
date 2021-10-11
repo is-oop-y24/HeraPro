@@ -10,28 +10,17 @@ namespace Isu.Entities
             GroupName = groupName;
         }
 
-        public Group(GroupName groupName, Student student)
-            : this(groupName)
-        {
-            ListOfStudents = new List<Student>(MaxNumberOfStudentsPerGroup) { student };
-        }
-
-        public Group(GroupName groupName, Student student, int maxNumberOfStudentsPerGroup)
-            : this(groupName, maxNumberOfStudentsPerGroup)
-        {
-            ListOfStudents.Add(student);
-        }
-
         public Group(GroupName groupName, int maxNumberOfStudentsPerGroup)
         : this(groupName)
         {
             if (maxNumberOfStudentsPerGroup < 0)
                 throw new IsuException(IsuException.MaxStudentsPerGroupReached);
 
-            ListOfStudents = new List<Student>(MaxNumberOfStudentsPerGroup = maxNumberOfStudentsPerGroup);
+            MaxNumberOfStudentsPerGroup = maxNumberOfStudentsPerGroup;
+            ListOfStudents = new List<Student>(MaxNumberOfStudentsPerGroup);
         }
 
-        public List<Student> ListOfStudents { get; set; } = new ();
+        public List<Student> ListOfStudents { get; } = new ();
         public GroupName GroupName { get; }
 
         public int MaxNumberOfStudentsPerGroup { get; set; } = 25;

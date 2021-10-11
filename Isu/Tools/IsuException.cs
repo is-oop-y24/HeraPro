@@ -13,6 +13,7 @@ namespace Isu.Tools
         public const string StudentIsNotFound = "no student found in this group";
         public const string IncorrectIdSet = "id should be >= 0";
         public const string GroupIsNotFound = "no groups been found";
+        public const string NoGroups = "no groups to be added";
         public IsuException()
         {
         }
