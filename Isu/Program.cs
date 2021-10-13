@@ -1,4 +1,7 @@
-﻿namespace Isu
+﻿using System;
+using System.Collections.Generic;
+
+namespace Isu
 {
     internal class Program
     {
