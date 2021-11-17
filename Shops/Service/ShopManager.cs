@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Shops.Entity;
@@ -48,6 +49,8 @@ namespace Shops.Service
         public Product BuyProductFromShop(Product product, int quantity, Shop shop, Person customer)
         {
             if (quantity <= 0)
+                return null;
+            if (quantity > product.Quantity)
                 return null;
 
             bool successPay =
@@ -140,14 +143,23 @@ namespace Shops.Service
             foreach (Shop shop in GetAllShops())
             {
                 decimal tmpPrice = 0;
-                var tmpShopProduct = GetAllProducts(shop).ToList();
-                if (tmpShopProduct.Count < tmpProducts.Count) continue;
+                var tmpShopProducts = GetAllProducts(shop).ToList();
+                if (tmpShopProducts.Count < tmpProducts.Count) continue;
 
                 foreach (Product product in tmpProducts)
                 {
-                    int index = tmpShopProduct.FindIndex(x => x.Name.Equals(product.Name));
-                    if (index == -1) break;
-                    if (tmpProducts[index].Quantity < product.Quantity) break;
+                    int index = tmpShopProducts.FindIndex(x => x.Name.Equals(product.Name));
+                    if (index == -1)
+                    {
+                        tmpPrice = decimal.MaxValue;
+                        break;
+                    }
+
+                    if (tmpProducts[index].Quantity < product.Quantity)
+                    {
+                        tmpPrice = decimal.MaxValue;
+                        break;
+                    }
 
                     tmpPrice += product.Price;
                 }

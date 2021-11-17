@@ -9,10 +9,10 @@ namespace Shops.Entity
         private readonly Dictionary<int, List<Product>> _listOfProductsByShop;
         private int _id;
 
-        internal ProductStack(int id = 1)
+        internal ProductStack()
         {
             _listOfProductsByShop = new Dictionary<int, List<Product>>();
-            _id = id;
+            _id = 1;
         }
 
         public bool AddProduct(Shop shop, Product product)
