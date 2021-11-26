@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Isu.Entities;
@@ -7,112 +8,78 @@ namespace Isu.Services
 {
     public class IsuService : IIsuService
     {
-        private readonly List<CourseNumber> _courseNumbers;
-        private int _defaultId = 100000;
+        private readonly Dictionary<Group, List<Person>> _studentsByGroup;
+        private int _defaultIdOfStudent = 100000;
 
-        public IsuService(int course)
+        public IsuService()
         {
-            if (course <= 0)
-                throw new IsuException(IsuException.IncorrectCourseNumber);
-
-            _courseNumbers = new List<CourseNumber>(course + 1);
-            for (int i = 1; i <= course; ++i)
-            {
-                _courseNumbers.Add(new CourseNumber(i));
-            }
+            _studentsByGroup = new Dictionary<Group, List<Person>>();
         }
 
-        public Group AddGroup(GroupName name)
+        public Group AddGroup(string name, int maxNumberOfStudentsPerGroup = 25)
         {
-            if (name.Course >= _courseNumbers.Capacity)
-                throw new IsuException(IsuException.IncorrectCourseNumber);
-            if (_courseNumbers[name.Course].ListOfGroupsByCourse.Any(i => i.GroupName.Equals(name)))
-                throw new IsuException(IsuException.AddSameGroupNameTwiceError);
+            Group check = FindGroup(name);
+            if (check != null)
+                return null;
 
-            var newGroup = new Group(name);
-            _courseNumbers[name.Course].ListOfGroupsByCourse.Add(newGroup);
-            return newGroup;
+            Group group = new (name, maxNumberOfStudentsPerGroup);
+            _studentsByGroup.Add(group, new List<Person>());
+            return group;
         }
 
-        public Student AddStudent(Group group, string name)
+        public Person AddStudent(string name, Group group)
         {
-            if (group.MaxNumberOfStudentsPerGroup.Equals(group.ListOfStudents.Count))
+            if (_studentsByGroup[group].Count >= group.MaxNumberOfStudentsPerGroup)
                 throw new IsuException(IsuException.MaxStudentsPerGroupReached);
 
-            var newStudent = new Student(_defaultId++, name, group.GroupName);
-            group.ListOfStudents.Add(newStudent);
+            _studentsByGroup[group].Add(new Person(_defaultIdOfStudent++, name, group));
+            return _studentsByGroup[group][^1];
+        }
+
+        public Person ChangeStudentGroup(Person person, Group newGroup)
+        {
+            int index = _studentsByGroup[person.Group].IndexOf(person);
+            if (index == -1)
+                return null;
+
+            var newStudent = new Person(person.Id, person.Name, newGroup);
+            _studentsByGroup[person.Group].RemoveAt(index);
+            _studentsByGroup[newGroup].Add(newStudent);
             return newStudent;
         }
 
-        public Student GetStudent(int id)
-        {
-            if (id < 0)
-                throw new IsuException(IsuException.NoStudentWithSuchId);
+        public Person FindPersonByName(string name) =>
+            _studentsByGroup.Values.Select(x => x.Find(y => y.Name.Equals(name))).FirstOrDefault();
 
-            return _courseNumbers
-                .SelectMany(course => course.ListOfGroupsByCourse, (course, group) => new { course, group })
-                .SelectMany(t => t.group.ListOfStudents).FirstOrDefault(student => student.Id.Equals(id));
+        public IEnumerable<Person> FindStudentsByGroup(string group)
+        {
+            return _studentsByGroup[FindGroup(group)];
         }
 
-        public Student FindStudent(string name) =>
-            _courseNumbers.SelectMany(course => course.ListOfGroupsByCourse)
-                .SelectMany(group => group.ListOfStudents)
-                .FirstOrDefault(student => student.Name.Equals(name));
-
-        public List<Student> FindStudents(GroupName groupName)
+        public IEnumerable<Person> FindStudentsByCourse(int courseNumber)
         {
-            if (groupName.Course >= _courseNumbers.Capacity)
-                throw new IsuException(IsuException.IncorrectCourseNumber);
+            if (courseNumber < 1)
+                return null;
 
-            return _courseNumbers[groupName.Course]
-                .ListOfGroupsByCourse.Where(group => group.GroupName.Equals(groupName))
-                .Select(group => group.ListOfStudents).FirstOrDefault();
+            var result = new List<Person>();
+            foreach (KeyValuePair<Group, List<Person>> keyValuePair in _studentsByGroup.Where(i =>
+                i.Key.Course.Id.Equals(courseNumber)))
+            {
+                result.AddRange(keyValuePair.Value);
+            }
+
+            return result;
         }
 
-        public List<Student> FindStudents(CourseNumber courseNumber)
-        {
-            if (!courseNumber.ListOfGroupsByCourse.Any())
-                throw new IsuException(IsuException.GroupIsNotFound);
+        public Group FindGroup(string group) => _studentsByGroup.Keys.FirstOrDefault(x => x.GroupName.Name.Equals(group));
 
-            IEnumerable<Student> students = courseNumber.ListOfGroupsByCourse.SelectMany(s => s.ListOfStudents);
-            return students.ToList();
-        }
+        public IEnumerable<Group> FindGroups(int courseNumber) =>
+            courseNumber < 1
+                ? null
+                : _studentsByGroup.Keys.Where(i => i.Course.Id.Equals(courseNumber));
 
-        public Group FindGroup(GroupName groupName)
-        {
-            if (groupName.Course >= _courseNumbers.Capacity)
-                throw new IsuException(IsuException.IncorrectCourseNumber);
-
-            return _courseNumbers[groupName.Course]
-                .ListOfGroupsByCourse.FirstOrDefault(group => group.GroupName.Equals(groupName));
-        }
-
-        public List<Group> FindGroups(CourseNumber courseNumber)
-        {
-            if (courseNumber?.ListOfGroupsByCourse == null)
-                throw new IsuException(IsuException.GroupIsNotFound);
-
-            return courseNumber.ListOfGroupsByCourse;
-        }
-
-        public void ChangeStudentGroup(Student student, Group newGroup)
-        {
-            if (student.Group.Course >= _courseNumbers.Capacity)
-                throw new IsuException(IsuException.IncorrectCourseNumber);
-            if (_courseNumbers[student.Group.Course]?.ListOfGroupsByCourse == null)
-                throw new IsuException(IsuException.NoSuchGroup);
-            if (!_courseNumbers[newGroup.GroupName.Course].ListOfGroupsByCourse.Contains(newGroup))
-                throw new IsuException(IsuException.NoSuchGroup);
-
-            Group currentGroup = _courseNumbers[student.Group.Course].ListOfGroupsByCourse
-                .FirstOrDefault(g => g.ListOfStudents.Contains(student));
-            if (currentGroup == null)
-                throw new IsuException(IsuException.StudentIsNotFound);
-
-            string name = student.Name;
-            int id = student.Id;
-            currentGroup.ListOfStudents.Remove(student);
-            newGroup.ListOfStudents.Add(new Student(id, name, newGroup.GroupName));
-        }
+        public IEnumerable<Person> GetAllPersons() => _studentsByGroup.SelectMany(x => x.Value);
+        public IEnumerable<Person> GetStudentsByGroups(Group group) => _studentsByGroup[group];
+        public IEnumerable<Group> GetAllGroups() => _studentsByGroup.Keys;
     }
 }

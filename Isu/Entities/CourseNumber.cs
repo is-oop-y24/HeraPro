@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Isu.Tools;
@@ -6,22 +7,14 @@ namespace Isu.Entities
 {
     public class CourseNumber
     {
-        public CourseNumber(int course)
+        internal CourseNumber(int id)
         {
-            Course = course;
-            ListOfGroupsByCourse = new List<Group>();
+            if (id <= 0)
+                throw new Exception(IsuException.IncorrectCourseNumber);
+
+            Id = id;
         }
 
-        public CourseNumber(int course, IReadOnlyCollection<Group> group)
-            : this(course)
-        {
-            if (!group.Any())
-                throw new IsuException(IsuException.NoGroups);
-
-            ListOfGroupsByCourse.AddRange(group);
-        }
-
-        public int Course { get; }
-        public List<Group> ListOfGroupsByCourse { get; }
+        public int Id { get; }
     }
 }
