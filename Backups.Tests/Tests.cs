@@ -49,7 +49,7 @@ namespace Backups.Tests
             BackupJob backupJob3 = Backup.CreateBackupJob(_files3, _path);
 
             backupJob1.AddNewRestorePoint(_singleStorage, "/", "backupJob1");
-            backupJob2.AddNewRestorePoint(_singleStorage, "C:\\", "backupJob2");
+            backupJob2.AddNewRestorePoint(_singleStorage, @"C:\", "backupJob2");
             backupJob3.AddNewRestorePoint(_singleStorage);
 
             backupJob1.AddNewRestorePoint(_splitStorage);

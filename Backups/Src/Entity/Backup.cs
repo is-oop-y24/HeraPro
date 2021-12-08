@@ -5,11 +5,11 @@ namespace Backups.Entity
 {
     public class Backup
     {
-        private readonly Repository _repository;
+        private readonly IRepository _repository;
 
-        public Backup(IEnumerable<string> rep)
+        public Backup(IRepository rep)
         {
-            _repository = new Repository(rep);
+            _repository = rep;
         }
 
         public Backup()
@@ -30,5 +30,7 @@ namespace Backups.Entity
                     _repository.Create(j);
             }
         }
+
+        public void UpdateDatabase() => _repository.Save();
     }
 }
