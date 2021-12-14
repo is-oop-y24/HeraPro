@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Isu.Entities;
 using Isu.Services;
@@ -9,13 +8,13 @@ namespace Isu.Tests
 {
     public class Tests
     {
-        private IIsuService _isuService;
         private const string GroupM3208 = "M3208";
         private const string GroupM3210 = "M3210";
         private const string GroupWithInvalidName = "M35136";
         private const string GroupWithTooShortName = "M330";
         private const string SomeoneRandom = "K-pop star";
         private const string MyName = "Ovanes";
+        private IIsuService _isuService;
 
         [SetUp]
         public void Setup()
@@ -40,13 +39,9 @@ namespace Isu.Tests
             {
                 Group group = _isuService.AddGroup(GroupM3208);
                 _isuService.AddStudent(MyName, group);
-                for (char i = 'A'; i < 'z'; ++i)
-                {
-                    _isuService.AddStudent(i.ToString(), group);
-                }
+                for (char i = 'A'; i < 'z'; ++i) _isuService.AddStudent(i.ToString(), @group);
             });
         }
-        
 
 
         [TestCase(GroupWithInvalidName)]
@@ -55,7 +50,6 @@ namespace Isu.Tests
         {
             Assert.Catch<IsuException>(() =>
             {
-
                 _isuService.AddGroup(groupName);
             });
         }
@@ -63,18 +57,17 @@ namespace Isu.Tests
         [Test]
         public void TransferStudentToAnotherGroup_GroupChanged()
         {
-            
-                Group group = _isuService.AddGroup(GroupM3208);
-                _isuService.AddStudent(MyName, group);
-                _isuService.AddStudent(SomeoneRandom, group);
-                Group group1 = _isuService.AddGroup(GroupM3210);
-                _isuService.AddStudent(SomeoneRandom, group1);
-                Person person = _isuService.ChangeStudentGroup(_isuService.FindPersonByName(MyName), _isuService.FindGroup(GroupM3210));
-                
-                Assert.AreEqual(2, _isuService.GetStudentsByGroups(group1).Count());
-                Assert.AreEqual(1, _isuService.GetStudentsByGroups(group).Count());
-                Assert.AreEqual(GroupM3210, person.Group.GroupName.Name);
-                
+            Group group = _isuService.AddGroup(GroupM3208);
+            _isuService.AddStudent(MyName, group);
+            _isuService.AddStudent(SomeoneRandom, group);
+            Group group1 = _isuService.AddGroup(GroupM3210);
+            _isuService.AddStudent(SomeoneRandom, group1);
+            Person person = _isuService.ChangeStudentGroup(_isuService.FindPersonByName(MyName),
+                _isuService.FindGroup(GroupM3210));
+
+            Assert.AreEqual(2, _isuService.GetStudentsByGroups(group1).Count());
+            Assert.AreEqual(1, _isuService.GetStudentsByGroups(group).Count());
+            Assert.AreEqual(GroupM3210, person.Group.GroupName.Name);
         }
     }
 }

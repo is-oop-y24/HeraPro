@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Isu.Entities;
@@ -48,8 +47,10 @@ namespace Isu.Services
             return newStudent;
         }
 
-        public Person FindPersonByName(string name) =>
-            _studentsByGroup.Values.Select(x => x.Find(y => y.Name.Equals(name))).FirstOrDefault();
+        public Person FindPersonByName(string name)
+        {
+            return _studentsByGroup.Values.Select(x => x.Find(y => y.Name.Equals(name))).FirstOrDefault();
+        }
 
         public IEnumerable<Person> FindStudentsByGroup(string group)
         {
@@ -64,22 +65,36 @@ namespace Isu.Services
             var result = new List<Person>();
             foreach (KeyValuePair<Group, List<Person>> keyValuePair in _studentsByGroup.Where(i =>
                 i.Key.Course.Id.Equals(courseNumber)))
-            {
                 result.AddRange(keyValuePair.Value);
-            }
 
             return result;
         }
 
-        public Group FindGroup(string group) => _studentsByGroup.Keys.FirstOrDefault(x => x.GroupName.Name.Equals(group));
+        public Group FindGroup(string group)
+        {
+            return _studentsByGroup.Keys.FirstOrDefault(x => x.GroupName.Name.Equals(group));
+        }
 
-        public IEnumerable<Group> FindGroups(int courseNumber) =>
-            courseNumber < 1
+        public IEnumerable<Group> FindGroups(int courseNumber)
+        {
+            return courseNumber < 1
                 ? null
                 : _studentsByGroup.Keys.Where(i => i.Course.Id.Equals(courseNumber));
+        }
 
-        public IEnumerable<Person> GetAllPersons() => _studentsByGroup.SelectMany(x => x.Value);
-        public IEnumerable<Person> GetStudentsByGroups(Group group) => _studentsByGroup[group];
-        public IEnumerable<Group> GetAllGroups() => _studentsByGroup.Keys;
+        public IEnumerable<Person> GetAllPersons()
+        {
+            return _studentsByGroup.SelectMany(x => x.Value);
+        }
+
+        public IEnumerable<Person> GetStudentsByGroups(Group group)
+        {
+            return _studentsByGroup[group];
+        }
+
+        public IEnumerable<Group> GetAllGroups()
+        {
+            return _studentsByGroup.Keys;
+        }
     }
 }

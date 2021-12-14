@@ -14,6 +14,7 @@ namespace Isu.Tools
         public const string IncorrectIdSet = "id should be >= 0";
         public const string GroupIsNotFound = "no groups been found";
         public const string NoGroups = "no groups to be added";
+
         public IsuException()
         {
         }

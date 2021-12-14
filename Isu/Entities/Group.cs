@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Isu.Tools;
 
 namespace Isu.Entities

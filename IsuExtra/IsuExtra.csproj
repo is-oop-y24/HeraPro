@@ -9,15 +9,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Isu\Isu.csproj"/>
+        <ProjectReference Include="..\Isu\Isu.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <EditorConfigFiles Remove="..\.editorconfig"/>
+        <EditorConfigFiles Remove="..\.editorconfig" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\.editorconfig"/>
+        <None Include="..\.editorconfig" />
     </ItemGroup>
 
     <ItemGroup>
@@ -25,10 +25,6 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="ValueObj"/>
     </ItemGroup>
 
 </Project>
