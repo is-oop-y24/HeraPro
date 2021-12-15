@@ -5,19 +5,19 @@ namespace Isu.Services
 {
     public interface IIsuService
     {
-        Group AddGroup(GroupName name);
+        Group AddGroup(string name, int maxNumberOfStudentsPerGroup = 25);
+        Person AddStudent(string name, Group group);
 
-        Student AddStudent(Group group, string name);
-        Student GetStudent(int id);
+        Person ChangeStudentGroup(Person person, Group newGroup);
 
-        Student FindStudent(string name);
+        Person FindPersonByName(string name);
+        IEnumerable<Person> FindStudentsByGroup(string group);
+        IEnumerable<Person> FindStudentsByCourse(int courseNumber);
+        Group FindGroup(string group);
+        IEnumerable<Group> FindGroups(int courseNumber);
 
-        List<Student> FindStudents(GroupName groupName);
-
-        List<Student> FindStudents(CourseNumber courseNumber);
-        Group FindGroup(GroupName groupName);
-
-        List<Group> FindGroups(CourseNumber courseNumber);
-        void ChangeStudentGroup(Student student, Group newGroup);
+        IEnumerable<Person> GetAllPersons();
+        IEnumerable<Person> GetStudentsByGroups(Group group);
+        IEnumerable<Group> GetAllGroups();
     }
 }
