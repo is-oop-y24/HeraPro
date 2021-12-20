@@ -6,13 +6,12 @@ namespace Backups.Algo
 {
     public class SplitStorage : IAlgoStorage
     {
-        public RestorePoint AddNewRestorePoint(IEnumerable<string> files, string zipPath)
+        public RestorePoint AddNewRestorePoint(IEnumerable<string> files, string zipName)
         {
-            IEnumerable<Storage> zipFiles = from i in files
-                let updZipPath = zipPath + '_' + i[(i.LastIndexOf('/') + 1) ..]
-                select new Storage(i, updZipPath);
+            int count = 0;
+            IEnumerable<Storage> list = files.Select(file => new Storage(file, zipName + count++));
 
-            return new RestorePoint(zipFiles);
+            return new RestorePoint(list);
         }
     }
 }

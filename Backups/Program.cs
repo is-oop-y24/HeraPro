@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Backups.Algo;
+using Backups.Database;
 using Backups.Entity;
 
 namespace Backups
@@ -8,15 +9,17 @@ namespace Backups
     {
         private static void Main()
         {
-            var files = new List<string>() { @"/home/hera/Downloads/lab-04" };
+            var files = new List<string>() { @"C:\Users\Khand\Desktop\file1.txt", @"C:\Users\Khand\Desktop\file2.txt", @"C:\Users\Khand\Desktop\file3.txt" };
             var singleStorage = new SingleStorage();
             var splitStorage = new SplitStorage();
-            const string path = @"/home/hera/test";
+            const string path = @"C:\Users\Khand\Desktop\output\";
 
-            BackupJob backupJob1 = Backup.CreateBackupJob(files, path);
+            BackupJob backupJob1 = Backup.CreateBackupJob(files);
 
             backupJob1.AddNewRestorePoint(singleStorage);
-            var backup = new Backup();
+            backupJob1.RemoveJobObject(@"C:\Users\Khand\Desktop\file3.txt");
+            backupJob1.AddNewRestorePoint(splitStorage);
+            var backup = new Backup(new LocalRepository(path));
             backup.SaveBackup(backupJob1);
             backup.UpdateDatabase();
         }

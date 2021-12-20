@@ -9,16 +9,16 @@ namespace Backups.Entity
         internal RestorePoint(IEnumerable<Storage> zipFiles)
         {
             Time = DateTime.Now;
-            PathsToZipFiles = zipFiles.ToList();
+            ZipFiles = zipFiles.ToList();
         }
 
         internal RestorePoint(Storage pathToZipFile)
         {
             Time = DateTime.Now;
-            PathsToZipFiles = new List<Storage> { pathToZipFile };
+            ZipFiles = new List<Storage> { pathToZipFile };
         }
 
         public DateTime Time { get; }
-        public List<Storage> PathsToZipFiles { get; }
+        public List<Storage> ZipFiles { get; }
     }
 }

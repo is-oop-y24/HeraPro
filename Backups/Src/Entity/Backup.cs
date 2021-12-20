@@ -14,10 +14,10 @@ namespace Backups.Entity
 
         public Backup()
         {
-            _repository = new Repository();
+            _repository = new VirtualRepository();
         }
 
-        public static BackupJob CreateBackupJob(IEnumerable<string> files, string path)
+        public static BackupJob CreateBackupJob(IEnumerable<string> files, string path = "Resource")
         {
             return new BackupJob(files, path);
         }
@@ -26,8 +26,7 @@ namespace Backups.Entity
         {
             foreach (RestorePoint i in backupJob.GetRestorePoints())
             {
-                foreach (Storage j in i.PathsToZipFiles)
-                    _repository.Create(j);
+                _repository.Create(i);
             }
         }
 

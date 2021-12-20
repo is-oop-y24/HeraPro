@@ -5,19 +5,19 @@ namespace Backups.Entity
 {
     public class Storage
     {
-        internal Storage(string pathToDirectory, string zipPath)
+        internal Storage(string pathToDirectory, string zipName)
         {
             Directory = new List<string> { pathToDirectory };
-            ZipPath = zipPath;
+            ZipName = zipName;
         }
 
-        internal Storage(IEnumerable<string> files, string zipPath)
+        internal Storage(IEnumerable<string> files, string zipName)
         {
             Directory = files.ToList();
-            ZipPath = zipPath;
+            ZipName = zipName;
         }
 
-        public string ZipPath { get; }
+        public string ZipName { get; }
         public List<string> Directory { get; }
     }
 }

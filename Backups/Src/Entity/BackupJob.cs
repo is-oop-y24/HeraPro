@@ -6,42 +6,42 @@ namespace Backups.Entity
 {
     public class BackupJob
     {
-        private readonly string _path;
+        private readonly string _nameOfZipFiles;
         private readonly List<RestorePoint> _restorePoints;
-        private JobObject _jobObject;
+        private readonly JobObject _jobObject;
 
-        internal BackupJob(JobObject jobObject, IEnumerable<RestorePoint> restorePoints, string path)
+        internal BackupJob(JobObject jobObject, IEnumerable<RestorePoint> restorePoints, string nameOfZipFiles)
         {
             _jobObject = jobObject;
             _restorePoints = restorePoints.ToList();
-            _path = path;
+            _nameOfZipFiles = nameOfZipFiles;
         }
 
-        internal BackupJob(IEnumerable<string> files, string path)
+        internal BackupJob(IEnumerable<string> files, string nameOfZipFiles)
         {
             _jobObject = new JobObject(files);
             _restorePoints = new List<RestorePoint>();
-            _path = path;
+            _nameOfZipFiles = nameOfZipFiles;
         }
 
         public void AddNewRestorePoint(IAlgoStorage algoStorage)
         {
-            _restorePoints.Add(algoStorage.AddNewRestorePoint(_jobObject.Files, _path + _restorePoints.Count));
+            _restorePoints.Add(algoStorage.AddNewRestorePoint(_jobObject.Files, _nameOfZipFiles));
         }
 
-        public void AddNewRestorePoint(IAlgoStorage algoStorage, string path)
+        public void AddNewRestorePoint(IAlgoStorage algoStorage, string zipName)
         {
-            _restorePoints.Add(algoStorage.AddNewRestorePoint(_jobObject.Files, path + _restorePoints.Count));
+            _restorePoints.Add(algoStorage.AddNewRestorePoint(_jobObject.Files, zipName));
         }
 
-        public void AddNewRestorePoint(IAlgoStorage algoStorage, string path, string name)
+        public void AddNewRestorePoint(IAlgoStorage algoStorage, string zipName, string name)
         {
-            _restorePoints.Add(algoStorage.AddNewRestorePoint(_jobObject.Files, path + name));
+            _restorePoints.Add(algoStorage.AddNewRestorePoint(_jobObject.Files, zipName + name));
         }
 
         public void AddNewJobObject(IEnumerable<string> files)
         {
-            _jobObject = new JobObject(files);
+            _jobObject.Files.AddRange(files);
         }
 
         public void RemoveJobObject(string file)
@@ -51,13 +51,13 @@ namespace Backups.Entity
 
         public JobObject GetJobObject()
         {
-            var tmp = new JobObject(_jobObject.Files);
-            return tmp;
+            var toReturn = new JobObject(_jobObject.Files);
+            return toReturn;
         }
 
         public string GetPath()
         {
-            return _path;
+            return _nameOfZipFiles;
         }
 
         public IEnumerable<RestorePoint> GetRestorePoints()

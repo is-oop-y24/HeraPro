@@ -36,7 +36,7 @@ namespace Backups.Tests
             backupJob.RemoveJobObject("FileB");
             backupJob.AddNewRestorePoint(_splitStorage);
             Assert.AreEqual(2, backupJob.GetRestorePoints().Count());
-            IEnumerable<int> storages = backupJob.GetRestorePoints().Select(x => x.PathsToZipFiles.Count);
+            IEnumerable<int> storages = backupJob.GetRestorePoints().Select(x => x.ZipFiles.Count);
             int sum = storages.Sum();
             Assert.AreEqual(3, sum);
         }

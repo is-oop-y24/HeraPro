@@ -5,6 +5,6 @@ namespace Backups.Algo
 {
     public interface IAlgoStorage
     {
-        RestorePoint AddNewRestorePoint(IEnumerable<string> files, string zipPath);
+        RestorePoint AddNewRestorePoint(IEnumerable<string> files, string zipName);
     }
 }

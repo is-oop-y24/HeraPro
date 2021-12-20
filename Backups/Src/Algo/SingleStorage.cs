@@ -5,9 +5,9 @@ namespace Backups.Algo
 {
     public class SingleStorage : IAlgoStorage
     {
-        public RestorePoint AddNewRestorePoint(IEnumerable<string> files, string zipPath)
+        public RestorePoint AddNewRestorePoint(IEnumerable<string> files, string zipName)
         {
-            return new RestorePoint(new Storage(files, zipPath));
+            return new RestorePoint(new Storage(files, zipName));
         }
     }
 }
