@@ -1,10 +1,13 @@
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Backups.Database;
 
 namespace Backups.Entity
 {
+    [DataContract]
     public class Backup
     {
+        [DataMember]
         private readonly IRepository _repository;
 
         public Backup(IRepository rep)
