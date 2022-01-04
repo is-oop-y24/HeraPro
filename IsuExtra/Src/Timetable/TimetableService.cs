@@ -7,7 +7,7 @@ namespace IsuExtra.TimeTable
 {
     public class TimeTableService
     {
-        private List<Timetable> _repositoryOfTimeTables;
+        private readonly List<Timetable> _repositoryOfTimeTables;
 
         public TimeTableService()
         {

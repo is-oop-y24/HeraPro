@@ -6,10 +6,7 @@ namespace Isu.Entities
     {
         internal Person(int id, string name, Group group)
         {
-            if (group == null)
-                throw new IsuException(IsuException.NoGroups);
-
-            Group = group;
+            Group = group ?? throw new IsuException(IsuException.NoGroups);
             Name = name;
             Id = id;
         }

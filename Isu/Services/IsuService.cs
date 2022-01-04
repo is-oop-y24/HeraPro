@@ -7,9 +7,9 @@ namespace Isu.Services
 {
     public class IsuService : IIsuService
     {
+        private readonly int _courseId;
         private readonly Dictionary<Group, List<Person>> _studentsByGroup;
         private int _defaultIdOfStudent = 100000;
-        private int _courseId;
 
         public IsuService(int courseId)
         {

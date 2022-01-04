@@ -86,7 +86,7 @@ namespace IsuExtra.Service
         }
 
         public IEnumerable<PersonExtra> GetStudentsFromElectiveByStream(Elective elective) =>
-            _persons.SelectMany(i => elective.Streams, (i, j) => new { i, j })
+            _persons.SelectMany(_ => elective.Streams, (i, j) => new { i, j })
                 .Where(t => t.i.ElectivesGroup.Contains(t.j))
                 .Select(t => t.i).ToList();
 
