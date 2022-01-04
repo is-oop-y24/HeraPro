@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Isu.Entities;
+using IsuExtra.Tools;
 
 namespace IsuExtra.Entity
 {
@@ -10,17 +11,23 @@ namespace IsuExtra.Entity
             : this(facultyId, maxNumberOfStudents)
         {
             var tmpStream = stream.ToList();
-            Stream.AddRange(tmpStream);
+            if (tmpStream.Count == 0)
+                throw new IsuExtraException(IsuExtraException.ElectiveBuildException);
+
+            Streams.AddRange(tmpStream);
         }
 
         internal Elective(string facultyId, int maxNumberOfStudents)
         {
+            if (facultyId == null)
+                throw new IsuExtraException(IsuExtraException.ElectiveBuildException);
+
             FacultyId = facultyId[..2];
             MaxNumberOfStudents = maxNumberOfStudents;
-            Stream = new List<Group>();
+            Streams = new List<Group>();
         }
 
-        public List<Group> Stream { get; }
+        public List<Group> Streams { get; }
         public string FacultyId { get; }
         public int MaxNumberOfStudents { get; }
     }

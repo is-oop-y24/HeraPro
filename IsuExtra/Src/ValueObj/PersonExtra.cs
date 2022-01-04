@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Isu.Entities;
+using IsuExtra.Tools;
 
 namespace IsuExtra.ValueObj
 {
@@ -7,6 +8,9 @@ namespace IsuExtra.ValueObj
     {
         internal PersonExtra(Person person, Group electiveGroup1, Group electiveGroup2)
         {
+            if (person == null || electiveGroup1 == null || electiveGroup2 == null)
+                throw new IsuExtraException(IsuExtraException.PersonExtraBuildException);
+
             Person = person;
             ElectivesGroup = new List<Group>() { electiveGroup1, electiveGroup2 };
         }

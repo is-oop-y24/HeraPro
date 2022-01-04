@@ -1,17 +1,20 @@
-using System.Collections.Generic;
 using Isu.Tools;
 
 namespace Isu.Entities
 {
     public class Group
     {
-        internal Group(string name, int maxNumberOfStudentsPerGroup)
+        internal Group(string name, int maxNumberOfStudentsPerGroup, int courseId)
         {
             if (maxNumberOfStudentsPerGroup < 0)
                 throw new IsuException(IsuException.MaxStudentsPerGroupReached);
+            if (name == null)
+                throw new IsuException(IsuException.IncorrectGroupName);
 
             GroupName = new GroupName(name);
-            Course = new CourseNumber(int.Parse(name.Substring(2, 1)));
+
+            var course = new CourseNumber(int.Parse(name.Substring(2, 1)));
+            Course = course.Id <= courseId ? course : null;
 
             MaxNumberOfStudentsPerGroup = maxNumberOfStudentsPerGroup;
         }

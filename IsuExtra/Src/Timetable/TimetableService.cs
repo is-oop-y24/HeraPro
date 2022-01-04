@@ -7,60 +7,86 @@ namespace IsuExtra.TimeTable
 {
     public class TimeTableService
     {
-        private List<TimeTable> _repositoryOfTimeTables;
+        private List<Timetable> _repositoryOfTimeTables;
 
         public TimeTableService()
         {
-            _repositoryOfTimeTables = new List<TimeTable>();
+            _repositoryOfTimeTables = new List<Timetable>();
         }
 
-        public Lesson AddLesson(DateTime start, DateTime end, PersonExtra teacher, int auditory) =>
-            new Lesson(start, end, teacher, auditory);
-
-        public TimeTable AddTimeTable(Elective elective, Lesson lesson)
+        public Timetable AddTimeTable(Elective elective)
         {
-            var timeTable = new TimeTable(elective.FacultyId, lesson);
+            var timeTable = new Timetable(elective.FacultyId);
             _repositoryOfTimeTables.Add(timeTable);
             return timeTable;
         }
 
-        public TimeTable AddTimeTable(Elective elective, IEnumerable<Lesson> lessons)
+        public Timetable AddTimeTable(Elective elective, IEnumerable<Lesson> lessons)
         {
-            var timeTable = new TimeTable(elective.FacultyId, lessons);
+            var timeTable = new Timetable(elective.FacultyId, lessons);
             _repositoryOfTimeTables.Add(timeTable);
             return timeTable;
         }
 
-        public TimeTable AddLessonToTimeTable(TimeTable timeTable, Lesson lesson)
+        public Timetable AddLessonToTimeTable(Timetable timetable, Lesson lesson)
         {
-            List<Lesson> list = timeTable.Schedule;
+            List<Lesson> list = timetable.Schedule;
             list.Add(lesson);
-            var newTimeTable = new TimeTable(timeTable.Id, list);
-            _repositoryOfTimeTables.Remove(timeTable);
+            var newTimeTable = new Timetable(timetable.Id, list);
+            _repositoryOfTimeTables.Remove(timetable);
             _repositoryOfTimeTables.Add(newTimeTable);
 
             return newTimeTable;
         }
 
-        public TimeTable RemoveLessonFromTimeTable(TimeTable timeTable, Lesson lesson)
+        public Timetable AddLessonToTimeTable(Timetable timetable, DateTime start, DateTime end, PersonExtra teacher, int auditory)
         {
-            List<Lesson> list = timeTable.Schedule;
-            list.Remove(lesson);
-            var newTimeTable = new TimeTable(timeTable.Id, list);
-            _repositoryOfTimeTables.Remove(timeTable);
+            Lesson lesson = AddLesson(start, end, teacher, auditory);
+            List<Lesson> list = timetable.Schedule;
+            list.Add(lesson);
+            var newTimeTable = new Timetable(timetable.Id, list);
+            _repositoryOfTimeTables.Remove(timetable);
             _repositoryOfTimeTables.Add(newTimeTable);
 
             return newTimeTable;
         }
 
-        public IEnumerable<TimeTable> GetTimeTables()
+        public Timetable RemoveLessonFromTimeTable(Timetable timetable, Lesson lesson)
+        {
+            List<Lesson> list = timetable.Schedule;
+            list.Remove(lesson);
+            var newTimeTable = new Timetable(timetable.Id, list);
+            _repositoryOfTimeTables.Remove(timetable);
+            _repositoryOfTimeTables.Add(newTimeTable);
+
+            return newTimeTable;
+        }
+
+        public Timetable RemoveLessonFromTimeTable(Timetable timetable, DateTime start, DateTime end, PersonExtra teacher, int auditory)
+        {
+            Lesson lesson = AddLesson(start, end, teacher, auditory);
+            List<Lesson> list = timetable.Schedule;
+            list.Remove(lesson);
+            var newTimeTable = new Timetable(timetable.Id, list);
+            _repositoryOfTimeTables.Remove(timetable);
+            _repositoryOfTimeTables.Add(newTimeTable);
+
+            return newTimeTable;
+        }
+
+        public IEnumerable<Timetable> GetTimeTables()
         {
             return _repositoryOfTimeTables.AsReadOnly();
         }
 
-        public TimeTable GetTimeTable(string id)
+        public Timetable GetTimeTable(string id)
         {
             return _repositoryOfTimeTables.Find(x => x.Id.Equals(id));
+        }
+
+        private Lesson AddLesson(DateTime start, DateTime end, PersonExtra teacher, int auditory)
+        {
+            return new Lesson(start, end, teacher, auditory);
         }
     }
 }

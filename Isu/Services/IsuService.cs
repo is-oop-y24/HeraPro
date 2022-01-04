@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Isu.Entities;
@@ -10,25 +9,31 @@ namespace Isu.Services
     {
         private readonly Dictionary<Group, List<Person>> _studentsByGroup;
         private int _defaultIdOfStudent = 100000;
+        private int _courseId;
 
-        public IsuService()
+        public IsuService(int courseId)
         {
             _studentsByGroup = new Dictionary<Group, List<Person>>();
+            _courseId = courseId;
         }
 
         public Group AddGroup(string name, int maxNumberOfStudentsPerGroup = 25)
         {
+            if (name == null)
+                return null;
             Group check = FindGroup(name);
             if (check != null)
                 return null;
 
-            Group group = new (name, maxNumberOfStudentsPerGroup);
+            Group group = new (name, maxNumberOfStudentsPerGroup, _courseId);
             _studentsByGroup.Add(group, new List<Person>());
             return group;
         }
 
         public Person AddStudent(string name, Group group)
         {
+            if (name == null || group == null)
+                return null;
             if (_studentsByGroup[group].Count >= group.MaxNumberOfStudentsPerGroup)
                 throw new IsuException(IsuException.MaxStudentsPerGroupReached);
 
@@ -38,6 +43,8 @@ namespace Isu.Services
 
         public Person ChangeStudentGroup(Person person, Group newGroup)
         {
+            if (person == null || newGroup == null)
+                return null;
             int index = _studentsByGroup[person.Group].IndexOf(person);
             if (index == -1)
                 return null;
@@ -51,10 +58,7 @@ namespace Isu.Services
         public Person FindPersonByName(string name) =>
             _studentsByGroup.Values.Select(x => x.Find(y => y.Name.Equals(name))).FirstOrDefault();
 
-        public IEnumerable<Person> FindStudentsByGroup(string group)
-        {
-            return _studentsByGroup[FindGroup(group)];
-        }
+        public IEnumerable<Person> FindStudentsByGroup(string group) => _studentsByGroup[FindGroup(@group)];
 
         public IEnumerable<Person> FindStudentsByCourse(int courseNumber)
         {

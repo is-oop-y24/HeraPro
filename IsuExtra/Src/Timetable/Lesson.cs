@@ -1,4 +1,5 @@
 using System;
+using IsuExtra.Tools;
 using IsuExtra.ValueObj;
 
 namespace IsuExtra.TimeTable
@@ -7,6 +8,9 @@ namespace IsuExtra.TimeTable
     {
         public Lesson(DateTime start, DateTime end, PersonExtra teacher, int auditory)
         {
+            if (teacher == null || auditory <= 0)
+                throw new IsuExtraException(IsuExtraException.LessonBuildException);
+
             Start = start;
             End = end;
             Teacher = teacher;

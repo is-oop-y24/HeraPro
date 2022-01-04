@@ -16,11 +16,12 @@ namespace Isu.Tests
         private const string GroupWithTooShortName = "M330";
         private const string SomeoneRandom = "K-pop star";
         private const string MyName = "Ovanes";
+        private const int Course = 4;
 
         [SetUp]
         public void Setup()
         {
-            _isuService = new IsuService();
+            _isuService = new IsuService(Course);
         }
 
         [Test]

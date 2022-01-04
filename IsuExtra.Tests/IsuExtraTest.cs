@@ -12,18 +12,18 @@ namespace IsuExtra.Tests
     {
         private const string GroupM3208 = "M3208";
         private const string GroupM3310 = "M3310";
-        private const string GroupExtraName1 = "M3236";
-        private const string GroupExtraName2 = "M3301";
+        private const string GroupExtraName1 = "M4236";
+        private const string GroupExtraName2 = "M4301";
         private const string SomeoneRandom = "K-pop star";
         private const string SomeoneElseRandom = "unknown";
         private const string MyName = "Ovanes";
         private IsuExtraService _isuExtraService;
-        
-        
+        private const int Course = 4;
+
         [SetUp]
         public void Setup()
         {
-            _isuExtraService = new IsuExtraService();
+            _isuExtraService = new IsuExtraService(Course);
         }
 
         [Test]
