@@ -2,6 +2,6 @@ namespace BackupsExtra.Logger
 {
     public interface IAlgoLog
     {
-        public void Write(string message);
+        void Write(string message);
     }
 }

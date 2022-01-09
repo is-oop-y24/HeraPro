@@ -40,18 +40,18 @@ namespace BackupsExtra.Entity
             if (algos.Count == 0)
                 return;
 
-            var list = algos.First().Compare(BackupJob.GetRestorePoints()).ToList();
+            var sortedRP = algos.First().Compare(BackupJob.GetRestorePoints()).ToList();
 
             if (algos.Count > 1)
             {
                 for (int i = 1; i < algos.Count(); ++i)
                 {
                     var tmp = algos[i].Compare(BackupJob.GetRestorePoints()).ToList();
-                    list = list.Intersect(tmp).ToList();
+                    sortedRP = sortedRP.Intersect(tmp).ToList();
                 }
             }
 
-            BackupJob = new BackupJob(BackupJob.NameOfZipFiles, list, BackupJob.JobObject);
+            BackupJob = new BackupJob(BackupJob.NameOfZipFiles, sortedRP, BackupJob.JobObject);
         }
 
         public void MergeRestorePoints(RestorePoint point1, RestorePoint point2)
