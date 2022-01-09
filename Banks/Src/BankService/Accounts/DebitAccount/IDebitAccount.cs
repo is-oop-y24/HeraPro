@@ -1,4 +1,4 @@
-namespace Banks.BankService.ValueObj.Accounts
+namespace Banks.BankService.Accounts.DebitAccount
 {
     public interface IDebitAccount
     {

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Banks.Database
@@ -18,19 +17,9 @@ namespace Banks.Database
             return _context.AsReadOnly();
         }
 
-        public T GetItem(int id)
-        {
-            return _context[id];
-        }
-
         public void Add(T item)
         {
             _context.Add(item);
-        }
-
-        public void Update(T item)
-        {
-            throw new NotImplementedException();
         }
 
         public void Update(T exItem, T newItem)
@@ -39,13 +28,14 @@ namespace Banks.Database
                 _context.Add(newItem);
         }
 
-        public void Delete(int id)
+        public void Remove(T item)
         {
-            _context.RemoveAt(id);
+            _context.Remove(item);
         }
 
-        public void Save()
+        public bool Contains(T item)
         {
+            return _context.Contains(item);
         }
     }
 }
