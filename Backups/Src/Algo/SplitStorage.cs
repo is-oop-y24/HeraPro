@@ -9,7 +9,7 @@ namespace Backups.Algo
         public RestorePoint AddNewRestorePoint(IEnumerable<string> files, string zipName)
         {
             int count = 0;
-            IEnumerable<Storage> list = files.Select(file => new Storage(file, zipName + count++));
+            var list = files.Select(file => new Storage(file, zipName + count++)).ToList();
 
             return new RestorePoint(list);
         }

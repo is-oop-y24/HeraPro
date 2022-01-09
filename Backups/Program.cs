@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using Backups.Algo;
 using Backups.Database;
 using Backups.Entity;
@@ -9,7 +13,7 @@ namespace Backups
     {
         private static void Main()
         {
-            var files = new List<string>() { @"C:\Users\Khand\Desktop\file1.txt", @"C:\Users\Khand\Desktop\file2.txt", @"C:\Users\Khand\Desktop\file3.txt" };
+            var files = new List<string>() { @"C:\Users\Khand\Desktop\test\file1.txt", @"C:\Users\Khand\Desktop\test\file2.txt", @"C:\Users\Khand\Desktop\test\file3.txt" };
             var singleStorage = new SingleStorage();
             var splitStorage = new SplitStorage();
             const string path = @"C:\Users\Khand\Desktop\output\";
@@ -22,6 +26,8 @@ namespace Backups
             var backup = new Backup(new LocalRepository(path));
             backup.SaveBackup(backupJob1);
             backup.UpdateDatabase();
+
+            Console.WriteLine();
         }
     }
 }

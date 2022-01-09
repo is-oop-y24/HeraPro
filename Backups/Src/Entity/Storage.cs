@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Backups.Entity
 {
+    [DataContract]
     public class Storage
     {
         internal Storage(string pathToDirectory, string zipName)
@@ -17,7 +20,9 @@ namespace Backups.Entity
             ZipName = zipName;
         }
 
-        public string ZipName { get; }
-        public List<string> Directory { get; }
+        [DataMember]
+        public string ZipName { get; internal set; }
+        [DataMember]
+        public List<string> Directory { get; internal set; }
     }
 }

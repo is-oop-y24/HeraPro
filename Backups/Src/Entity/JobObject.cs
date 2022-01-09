@@ -1,8 +1,12 @@
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Backups.Entity
 {
+    [DataContract]
     public class JobObject
     {
         internal JobObject(IEnumerable<string> files)
@@ -10,6 +14,7 @@ namespace Backups.Entity
             Files = files.ToList();
         }
 
-        public List<string> Files { get; }
+        [DataMember]
+        public List<string> Files { get; internal set; }
     }
 }
