@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Isu.Entities;
 using IsuExtra.Entity;
 using IsuExtra.Service;
+using IsuExtra.TimeTable;
 using IsuExtra.ValueObj;
 using NUnit.Framework;
 
@@ -17,6 +19,7 @@ namespace IsuExtra.Tests
         private const string SomeoneRandom = "K-pop star";
         private const string SomeoneElseRandom = "unknown";
         private const string MyName = "Ovanes";
+        private const string Teacher = "Teacher";
         private IsuExtraService _isuExtraService;
         private const int Course = 4;
 
@@ -101,23 +104,31 @@ namespace IsuExtra.Tests
         [Test]
         public void GetStudentsWithoutElective()
         {
+            DateTime start = DateTime.Now;
             Group group1 = _isuExtraService.AddGroup(GroupM3208);
             Group group2 = _isuExtraService.AddGroup(GroupM3310);
+            DateTime end = DateTime.Now;
             Person student1 = _isuExtraService.AddStudent(MyName, group1);
             Person student2 = _isuExtraService.AddStudent(SomeoneRandom, group2);
             PersonExtra studentExtra1 = _isuExtraService.AddStudentExtra(student1);
             PersonExtra studentExtra2 = _isuExtraService.AddStudentExtra(student2);
-            Elective elective = _isuExtraService.AddElective("M32100");
-            Elective elective1 = _isuExtraService.AddElective("M3153");
+            Elective elective = _isuExtraService.AddElective("M42100");
             Group groupElective = _isuExtraService.AddGroup(GroupExtraName1);
+            Timetable timetable = _isuExtraService.AddTimetable(elective);
+            _isuExtraService.AddLessonToTimetable(timetable, start, end, _isuExtraService.AddTeacher(Teacher), 239, groupElective.GroupName);
+            start = DateTime.Now;
+            Elective elective1 = _isuExtraService.AddElective("M4153");
+            Timetable timetable1 = _isuExtraService.AddTimetable(elective1);
             Group groupElective1 = _isuExtraService.AddGroup(GroupExtraName2);
+            end = DateTime.Now;
+            _isuExtraService.AddLessonToTimetable(timetable1, start, end, _isuExtraService.AddTeacher(Teacher), 279, groupElective1.GroupName);
             _isuExtraService.AddGroupToElective(groupElective, elective);
             _isuExtraService.AddGroupToElective(groupElective1, elective1);
             _isuExtraService.AddStudentToElectiveGroup(studentExtra1, groupElective);
             _isuExtraService.AddStudentToElectiveGroup(studentExtra1, groupElective1);
             _isuExtraService.AddStudentToElectiveGroup(studentExtra2, groupElective);
             IEnumerable<PersonExtra> studentsFromFinder = _isuExtraService.GetStudentsWithoutElectives();
-            Assert.AreEqual(studentExtra2, studentsFromFinder.First());
+            Assert.AreEqual(studentExtra1, studentsFromFinder.First());
         }
     }
     

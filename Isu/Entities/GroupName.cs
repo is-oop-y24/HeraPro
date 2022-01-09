@@ -6,8 +6,11 @@ namespace Isu.Entities
     {
         internal GroupName(string name)
         {
+            if (name is not { Length: 5 })
+                throw new IsuException(IsuException.IncorrectGroupName);
+
             string tmp = name[2].ToString();
-            if (name is not { Length: 5 } || !int.TryParse(tmp, out _))
+            if (!int.TryParse(tmp, out _))
                 throw new IsuException(IsuException.IncorrectGroupName);
 
             Name = name;

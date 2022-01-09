@@ -9,6 +9,7 @@ namespace IsuExtra.TimeTable
         public Timetable(string id)
         {
             Id = id ?? throw new IsuExtraException(IsuExtraException.TimetableBuildException);
+            Schedule = new List<Lesson>();
         }
 
         public Timetable(string id, Lesson lesson)

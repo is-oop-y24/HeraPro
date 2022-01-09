@@ -52,11 +52,11 @@ namespace IsuExtra.Service
 
         public Timetable AddTimetable(Elective elective) => _timeTableService.AddTimeTable(elective);
 
-        public Timetable AddLessonToTimetable(Timetable timetable, DateTime start, DateTime end, PersonExtra teacher, int auditory) =>
-            _timeTableService.AddLessonToTimeTable(timetable, start, end, teacher, auditory);
+        public Timetable AddLessonToTimetable(Timetable timetable, DateTime start, DateTime end, PersonExtra teacher, int auditory, GroupName group) =>
+            _timeTableService.AddLessonToTimeTable(timetable, start, end, teacher, auditory, group);
 
-        public Timetable RemoveLessonFromTimetable(Timetable timetable, DateTime start, DateTime end, PersonExtra teacher, int auditory) =>
-            _timeTableService.RemoveLessonFromTimeTable(timetable, start, end, teacher, auditory);
+        public Timetable RemoveLessonFromTimetable(Timetable timetable, DateTime start, DateTime end, PersonExtra teacher, int auditory, GroupName group) =>
+            _timeTableService.RemoveLessonFromTimeTable(timetable, start, end, teacher, auditory, group);
 
         public IEnumerable<Timetable> GetTimeTables() => _timeTableService.GetTimeTables();
 
@@ -81,8 +81,26 @@ namespace IsuExtra.Service
             if (!(studentsByGroup.Count < group.MaxNumberOfStudentsPerGroup))
                 return false;
 
-            student.ElectivesGroup.Add(group);
-            return student.ElectivesGroup.Contains(group);
+            if (student.ElectivesGroup.Count == 0)
+            {
+                student.ElectivesGroup.Add(group);
+                return student.ElectivesGroup.Contains(group);
+            }
+
+            Timetable timetableOfGroupToAdd = _timeTableService.GetTimeTable(group.GroupName.MegaFaculty);
+            Group electiveAdded = student.ElectivesGroup.First();
+            Timetable timetableOfGroupAdded =
+                _timeTableService.GetTimeTable(electiveAdded.GroupName.MegaFaculty);
+            List<Lesson> listOfLessonsFromGroupToAdd =
+                timetableOfGroupToAdd.Schedule.FindAll(x => x.Group.Name.Equals(group.GroupName.Name));
+            List<Lesson> listOfLessonsFromGroupAdded =
+                timetableOfGroupAdded.Schedule.FindAll(x => x.Group.Name.Equals(electiveAdded.GroupName.Name));
+            return !listOfLessonsFromGroupToAdd
+                .SelectMany(
+                    _ => listOfLessonsFromGroupAdded,
+                    (lessonToAdd, lessonAdded) => new { lessonToAdd, lessonAdded })
+                .Where(t => _timeTableService.Intersects(t.lessonToAdd, t.lessonAdded))
+                .Select(t => t.lessonToAdd).Any();
         }
 
         public IEnumerable<PersonExtra> GetStudentsFromElectiveByStream(Elective elective) =>
