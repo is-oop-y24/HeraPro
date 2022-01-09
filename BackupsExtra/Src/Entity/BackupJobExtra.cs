@@ -10,7 +10,7 @@ namespace BackupsExtra.Entity
     [DataContract]
     public class BackupJobExtra
     {
-        internal BackupJobExtra(BackupJob backupJob)
+        public BackupJobExtra(BackupJob backupJob)
         {
             BackupJob = backupJob;
         }
