@@ -94,10 +94,10 @@ namespace IsuExtra.TimeTable
             else
             {
                 if (lesson2.End > lesson1.Start && lesson2.End < lesson1.End)
-                    return true; // Condition 2
+                    return true;
 
                 if (lesson2.End > lesson1.End)
-                    return true; // Condition 4
+                    return true;
             }
 
             return false;
