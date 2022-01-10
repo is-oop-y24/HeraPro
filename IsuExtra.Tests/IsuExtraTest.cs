@@ -125,7 +125,6 @@ namespace IsuExtra.Tests
             _isuExtraService.AddGroupToElective(groupElective, elective);
             _isuExtraService.AddGroupToElective(groupElective1, elective1);
             _isuExtraService.AddStudentToElectiveGroup(studentExtra1, groupElective);
-            _isuExtraService.AddStudentToElectiveGroup(studentExtra1, groupElective1);
             _isuExtraService.AddStudentToElectiveGroup(studentExtra2, groupElective);
             IEnumerable<PersonExtra> studentsFromFinder = _isuExtraService.GetStudentsWithoutElectives();
             Assert.AreEqual(studentExtra1, studentsFromFinder.First());

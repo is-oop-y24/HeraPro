@@ -81,10 +81,16 @@ namespace IsuExtra.Service
             if (!(studentsByGroup.Count < group.MaxNumberOfStudentsPerGroup))
                 return false;
 
-            Timetable timetableOfElectiveToAdd = _timeTableService.GetTimeTable(group.GroupName.Name);
+            if (student.ElectivesGroup.Count == 0)
+            {
+                student.ElectivesGroup.Add(group);
+                return student.ElectivesGroup.Contains(group);
+            }
+
+            Timetable timetableOfElectiveToAdd = _timeTableService.GetTimeTable(group.GroupName.MegaFaculty);
             Group electiveAdded = student.ElectivesGroup.First();
             Timetable timetableOfElectiveAdded =
-                _timeTableService.GetTimeTable(electiveAdded.GroupName.Name);
+                _timeTableService.GetTimeTable(electiveAdded.GroupName.MegaFaculty);
             Timetable timetableOfGroup = _timeTableService.GetTimeTable(student.Person.Group.GroupName.Name);
             List<Lesson> listOfLessonsFromElectiveToAdd =
                 timetableOfElectiveToAdd.Schedule.FindAll(x => x.Group.Name.Equals(group.GroupName.Name));
