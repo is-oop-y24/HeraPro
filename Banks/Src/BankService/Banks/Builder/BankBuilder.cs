@@ -74,9 +74,9 @@ namespace Banks.BankService.Banks.Builder
         {
             _name = "Test";
             _balance = 100000;
-            _commissionForCreditAccount = 0.1;
+            _commissionForCreditAccount = .1;
             _limitForCreditAccount = 20000;
-            _balancePaymentForDebitAccount = 0.01;
+            _balancePaymentForDebitAccount = .01;
             _percentByBalanceForDepositAccount = new List<DepositCommission>()
                 { new (0.3, 50000), new (0.35, 100000), new (0.4, 500000) };
             _limitForUntrustedCLients = 10000;

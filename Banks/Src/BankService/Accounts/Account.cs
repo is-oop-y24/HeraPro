@@ -13,5 +13,6 @@ namespace Banks.BankService.Accounts
         internal abstract bool Deposit(double money);
         internal abstract bool DoCommission();
         internal abstract double CheckCommission(int days);
+        internal abstract void DoPayment();
     }
 }

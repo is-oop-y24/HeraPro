@@ -18,7 +18,7 @@ namespace Banks.BankService.Accounts.CreditAccount
 
             double diff = Balance - money;
             if (diff < 0)
-                diff = Balance - (money * Commission);
+                diff = Balance - (money * (1 + Commission));
 
             if (-diff > Limit) return false;
 
@@ -42,6 +42,11 @@ namespace Banks.BankService.Accounts.CreditAccount
         internal override double CheckCommission(int days)
         {
             return 0;
+        }
+
+        internal override void DoPayment()
+        {
+            return;
         }
     }
 }

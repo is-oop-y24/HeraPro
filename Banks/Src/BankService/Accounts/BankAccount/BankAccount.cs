@@ -49,5 +49,10 @@ namespace Banks.BankService.Accounts.BankAccount
         {
             return 0;
         }
+
+        internal override void DoPayment()
+        {
+            return;
+        }
     }
 }

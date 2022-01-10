@@ -43,16 +43,17 @@ namespace Banks.BankService.Banks
             return _clientBuilder;
         }
 
-        public void AddClient()
+        public IClient AddClient()
         {
             IClient client = _clientBuilder.GetClient();
             if (client == null)
-                return;
+                return null;
 
             if (client.Passport == null || client.Address == null)
                 _repositoryOfUntrustedClients.Add(client);
 
             _repositoryOfTrustedClients.Add(client);
+            return client;
         }
 
         public DebitAccount AddDebitAccount(Client client, double money)
@@ -79,7 +80,7 @@ namespace Banks.BankService.Banks
             return account;
         }
 
-        public void CommissionForCreditAccount(double commissionForCreditAccount)
+        public void ChangeCommissionForCreditAccount(double commissionForCreditAccount)
         {
             var account = new BankAccount(
                 Account.Balance,
@@ -93,7 +94,7 @@ namespace Banks.BankService.Banks
             Notify();
         }
 
-        public void LimitForCreditAccount(int limitForCreditAccount)
+        public void ChangeLimitForCreditAccount(int limitForCreditAccount)
         {
             var account = new BankAccount(
                 Account.Balance,
@@ -107,7 +108,7 @@ namespace Banks.BankService.Banks
             Notify();
         }
 
-        public void BalancePaymentForDebitAccount(double balancePaymentForDebitAccount)
+        public void ChangeBalancePaymentForDebitAccount(double balancePaymentForDebitAccount)
         {
             var account = new BankAccount(
                 Account.Balance,
@@ -121,7 +122,7 @@ namespace Banks.BankService.Banks
             Notify();
         }
 
-        public void PercentByBalanceForDepositAccount(List<DepositCommission> percentByBalanceForDepositAccount)
+        public void ChangePercentByBalanceForDepositAccount(List<DepositCommission> percentByBalanceForDepositAccount)
         {
             var account = new BankAccount(
                 Account.Balance,
@@ -135,7 +136,7 @@ namespace Banks.BankService.Banks
             Notify();
         }
 
-        public void LimitForUntrustedClients(int limitForUntrustedClients)
+        public void ChangeLimitForUntrustedClients(int limitForUntrustedClients)
         {
             var account = new BankAccount(
                 Account.Balance,
@@ -153,16 +154,14 @@ namespace Banks.BankService.Banks
         {
             if (!clientFrom.Accounts.Contains(accountFrom) || !clientTo.Accounts.Contains(accountTo))
                 return false;
-            if (accountFrom.Balance < money)
-                return false;
 
             TransactionScope scope;
             if (_repositoryOfTrustedClients.Contains(clientFrom))
             {
                 scope = new TransactionScope();
+                if (!accountFrom.Withdraw(money)) return false;
+                accountTo.Deposit(money);
                 Operations.Add(new Log(accountFrom, accountTo, money, OperationEnum.TransferOp));
-                accountFrom.Balance -= money;
-                accountTo.Balance += money;
                 scope.Complete();
                 return true;
             }
@@ -174,9 +173,9 @@ namespace Banks.BankService.Banks
                 return false;
 
             scope = new TransactionScope();
+            if (!accountFrom.Withdraw(money)) return false;
+            accountTo.Deposit(money);
             Operations.Add(new Log(accountFrom, accountTo, money, OperationEnum.TransferOp));
-            accountFrom.Balance -= money;
-            accountTo.Balance += money;
             scope.Complete();
             return true;
         }
@@ -211,6 +210,34 @@ namespace Banks.BankService.Banks
             {
                 account.DoCommission();
             }
+        }
+
+        public void DoPayment()
+        {
+            var clients = new List<IClient>();
+            clients.AddRange(_repositoryOfTrustedClients.GetItemList());
+            clients.AddRange(_repositoryOfUntrustedClients.GetItemList());
+            foreach (Account account in clients.SelectMany(client => client.Accounts))
+            {
+                account.DoPayment();
+            }
+        }
+
+        public IEnumerable<IClient> GetTrustedClientsList()
+        {
+            return _repositoryOfTrustedClients.GetItemList();
+        }
+
+        public IEnumerable<IClient> GetUntrustedClientsList()
+        {
+            return _repositoryOfUntrustedClients.GetItemList();
+        }
+
+        public IEnumerable<IClient> GetClientsList()
+        {
+            var list = GetTrustedClientsList().ToList();
+            list.AddRange(GetUntrustedClientsList());
+            return list;
         }
 
         public double CheckCommission(IClient client, Account account, int days)
@@ -264,6 +291,7 @@ namespace Banks.BankService.Banks
         public void Subscribe(ISubscriber subscriber)
         {
             _repositoryOfSubscribers.Add(subscriber);
+            subscriber.Update(Account);
         }
 
         public void Unsubscribe(ISubscriber subscriber)

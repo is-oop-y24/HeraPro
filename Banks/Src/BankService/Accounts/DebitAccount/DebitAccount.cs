@@ -35,7 +35,7 @@ namespace Banks.BankService.Accounts.DebitAccount
         {
             double result = CheckCommission(1);
             if (result == 0) return false;
-            Cashback = result;
+            Cashback += result;
             return true;
         }
 
@@ -43,6 +43,12 @@ namespace Banks.BankService.Accounts.DebitAccount
         {
             if (days < 0) return 0;
             return Balance * (BalancePayment / days);
+        }
+
+        internal override void DoPayment()
+        {
+            Balance += Cashback;
+            Cashback = 0;
         }
     }
 }

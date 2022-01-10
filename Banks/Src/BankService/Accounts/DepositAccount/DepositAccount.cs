@@ -53,9 +53,16 @@ namespace Banks.BankService.Accounts.DepositAccount
 
             PercentByBalance.Sort();
             DepositCommission fee = PercentByBalance.Find(x => x.Price > Balance);
-            int count = (EndPeriod - StartPeriod).Days - days;
+            int count = (EndPeriod - StartPeriod).Days;
             if (fee == null) return 0;
-            return Balance * (fee.Percent / count);
+            if (count < 1) count = 1;
+            return Balance * (fee.Percent / count * days);
+        }
+
+        internal override void DoPayment()
+        {
+            Balance += Cashback;
+            Cashback = 0;
         }
     }
 }

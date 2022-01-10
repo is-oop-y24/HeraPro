@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Transactions;
 using Banks.BankLogService;
 using Banks.BankService.Accounts.DepositAccount;
@@ -49,9 +50,9 @@ namespace Banks.BankService.Banks
             if (money < 0) return false;
 
             var scope = new TransactionScope();
+            if (!bankFrom.Account.Withdraw(money)) return false;
+            bankTo.Account.Deposit(money);
             Operations.Add(new Log(bankFrom.Account, bankTo.Account, money, OperationEnum.TransferOp));
-            bankFrom.Account.Balance -= money;
-            bankTo.Account.Balance += money;
             scope.Complete();
             return true;
         }
@@ -75,5 +76,32 @@ namespace Banks.BankService.Banks
                 bank.DoCommission();
             }
         }
+
+        public void DoPayment()
+        {
+            foreach (IBank bank in _repositoryOfBanks.GetItemList())
+            {
+                bank.DoPayment();
+            }
+        }
+
+        public IBank FindBankByName(string name)
+        {
+            var banks = _repositoryOfBanks.GetItemList().ToList();
+            return banks.Find(x => x.Name.Equals(name));
+        }
+
+        public IEnumerable<Log> GetTransactionsByAllBanks()
+        {
+            var list = Operations.ToList();
+            foreach (IBank bank in GetBanksList())
+            {
+                list.AddRange(bank.Operations);
+            }
+
+            return list;
+        }
+
+        public IEnumerable<IBank> GetBanksList() => _repositoryOfBanks.GetItemList();
     }
 }

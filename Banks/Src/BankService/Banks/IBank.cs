@@ -1,4 +1,7 @@
-﻿using Banks.BankService.Accounts.BankAccount;
+﻿using System.Collections.Generic;
+using Banks.BankLogService;
+using Banks.BankService.Accounts.BankAccount;
+using Banks.BankService.Clients;
 
 namespace Banks.BankService.Banks
 {
@@ -6,7 +9,10 @@ namespace Banks.BankService.Banks
     {
         string Name { get; }
         BankAccount Account { get; }
+        List<Log> Operations { get; }
 
-        public void DoCommission();
+        void DoCommission();
+        void DoPayment();
+        IEnumerable<IClient> GetClientsList();
     }
 }
