@@ -81,23 +81,21 @@ namespace IsuExtra.Service
             if (!(studentsByGroup.Count < group.MaxNumberOfStudentsPerGroup))
                 return false;
 
-            if (student.ElectivesGroup.Count == 0)
-            {
-                student.ElectivesGroup.Add(group);
-                return student.ElectivesGroup.Contains(group);
-            }
-
-            Timetable timetableOfGroupToAdd = _timeTableService.GetTimeTable(group.GroupName.MegaFaculty);
+            Timetable timetableOfElectiveToAdd = _timeTableService.GetTimeTable(group.GroupName.Name);
             Group electiveAdded = student.ElectivesGroup.First();
-            Timetable timetableOfGroupAdded =
-                _timeTableService.GetTimeTable(electiveAdded.GroupName.MegaFaculty);
-            List<Lesson> listOfLessonsFromGroupToAdd =
-                timetableOfGroupToAdd.Schedule.FindAll(x => x.Group.Name.Equals(group.GroupName.Name));
-            List<Lesson> listOfLessonsFromGroupAdded =
-                timetableOfGroupAdded.Schedule.FindAll(x => x.Group.Name.Equals(electiveAdded.GroupName.Name));
-            return !listOfLessonsFromGroupToAdd
+            Timetable timetableOfElectiveAdded =
+                _timeTableService.GetTimeTable(electiveAdded.GroupName.Name);
+            Timetable timetableOfGroup = _timeTableService.GetTimeTable(student.Person.Group.GroupName.Name);
+            List<Lesson> listOfLessonsFromElectiveToAdd =
+                timetableOfElectiveToAdd.Schedule.FindAll(x => x.Group.Name.Equals(group.GroupName.Name));
+            List<Lesson> listOfLessonsAdded =
+                timetableOfElectiveAdded.Schedule.FindAll(x => x.Group.Name.Equals(electiveAdded.GroupName.Name));
+            listOfLessonsAdded.AddRange(
+                timetableOfGroup.Schedule.FindAll(x => x.Group.Name.Equals(student.Person.Group.GroupName.Name)));
+
+            return !listOfLessonsFromElectiveToAdd
                 .SelectMany(
-                    _ => listOfLessonsFromGroupAdded,
+                    _ => listOfLessonsAdded,
                     (lessonToAdd, lessonAdded) => new { lessonToAdd, lessonAdded })
                 .Where(t => _timeTableService.Intersects(t.lessonToAdd, t.lessonAdded))
                 .Select(t => t.lessonToAdd).Any();
