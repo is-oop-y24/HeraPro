@@ -6,7 +6,6 @@ using Backups.Entity;
 using BackupsExtra.Algo;
 using BackupsExtra.Database;
 using BackupsExtra.Entity;
-using BackupsExtra.Logger;
 
 namespace BackupsExtra
 {
