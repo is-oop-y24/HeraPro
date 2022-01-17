@@ -4,16 +4,20 @@ namespace Isu.Entities
 {
     public class GroupName
     {
-        public GroupName(string name)
+        internal GroupName(string name)
         {
-            if (name is not { Length: 5 } || name[..2] != "M3" || int.Parse(name.Substring(2, 1)) <= 0)
+            if (name is not { Length: 5 })
+                throw new IsuException(IsuException.IncorrectGroupName);
+
+            string tmp = name[2].ToString();
+            if (!int.TryParse(tmp, out _))
                 throw new IsuException(IsuException.IncorrectGroupName);
 
             Name = name;
-            Course = int.Parse(name.Substring(2, 1));
+            MegaFaculty = name[..2];
         }
 
-        public int Course { get; }
+        public string MegaFaculty { get; }
         public string Name { get; }
     }
 }
